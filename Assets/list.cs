@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,6 +34,7 @@ namespace melon
 		{
 			
 			public int Count { private set; get; } = 0;
+			public int capacity = 4;
 			T[] array = new T[4];
 			
 			public T this[int index]
@@ -40,6 +42,9 @@ namespace melon
 				
 				set
 				{
+					// throw양수음수 추가하기
+					if (index > capacity || index < 0)
+						throw new Exception("index의 값이 범위를 벗어났습니.");
 					array[index] = value;
 				}
 				get
@@ -96,6 +101,7 @@ namespace melon
 
 			public bool Remove(T value)
 			{
+				int deleteIndex = Count;
 				for(int i = 0; i< Count; i++)
                 {
 					if(EqualityComparer<T>.Default.Equals(array[i], value))
@@ -104,13 +110,17 @@ namespace melon
                         {
 							array[j] = array[j + 1];
                         }
+						Count--;
+						array[deleteIndex-1] = default;
+						return true;
                     }
                 }
-				Count--;
 				return false;
+				//default로 삭제된 리스트 비워주기
 			}
 			public void RemoveAt(int index)
 			{
+				// index검
 				for(int i = index; i< Count; i++)
                 {
 					array[i] = array[i + 1];
@@ -120,7 +130,8 @@ namespace melon
 
 			public void Clear()
 			{
-				
+				System.Array.Resize(ref array, 0);
+				Count = 0;
 			}
 	}
 
